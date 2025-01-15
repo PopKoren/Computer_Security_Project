@@ -1,4 +1,4 @@
-import os
+from .models import Client
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -10,9 +10,8 @@ from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db import IntegrityError
 from django.core.cache import cache
-
+from .models import Subscription, Client, PasswordHistory, LoginAttempt
 from api.config import PASSWORD_CONFIG
-from .models import Customer, Subscription  # Make sure this is imported
 from django.core.mail import send_mail
 from django.conf import settings
 import random
@@ -21,6 +20,9 @@ import hashlib
 from .models import PasswordHistory, LoginAttempt
 from .validators import validate_password
 from datetime import timedelta
+from django.db.models import QuerySet
+from typing import Any
+from django.utils.html import escape
 
 @api_view(['POST'])
 def login_view(request):
@@ -458,4 +460,54 @@ def reset_password(request):
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=400)
     except ValueError as e:
+        return Response({'error': str(e)}, status=400)
+    
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def client_list(request) -> Response:
+    if request.method == 'GET':
+        clients: QuerySet[Client] = Client.objects.all().order_by('-created_at')
+        data = [{
+            'id': client.pk,
+            'name': escape(client.name),  # Encode HTML characters
+            'email': escape(client.email),  # Encode HTML characters
+            'client_id': escape(client.client_id),  # Encode HTML characters
+            'created_at': client.created_at,
+            'created_by': escape(client.created_by.username) if client.created_by else None
+        } for client in clients]
+        return Response(data)
+
+    # if method is POST
+    try:
+        # Escape input before saving to database
+        client: Client = Client.objects.create(
+            name=escape(request.data.get('name')),
+            email=escape(request.data.get('email')),
+            client_id=escape(request.data.get('client_id')),
+            created_by=request.user
+        )
+        return Response({
+            'id': client.pk,
+            'name': escape(client.name),
+            'email': escape(client.email),
+            'client_id': escape(client.client_id),
+            'created_at': client.created_at,
+            'created_by': escape(client.created_by.username) if client.created_by else ''
+        }, status=201)
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+    
+    
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def client_delete(request, client_id):
+    try:
+        client = Client.objects.get(id=client_id)
+        client.delete()
+        return Response({'message': 'Client deleted successfully'}, status=200)
+    except Client.DoesNotExist:
+        return Response({'error': 'Client not found'}, status=404)
+    except Exception as e:
         return Response({'error': str(e)}, status=400)
