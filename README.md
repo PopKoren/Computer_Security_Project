@@ -1,4 +1,4 @@
-# This is the Safe Version of the project, for the vulnerable click here:
+# This is the Safe Version of the project, for the vulnerable version please click here:
 # https://github.com/PopKoren/Computer_Security_Vulnerable_Version
 
 
