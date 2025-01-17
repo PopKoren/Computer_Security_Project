@@ -97,10 +97,6 @@ DATABASES = {
 - `/api/users/` - User management (admin)
 - `/api/user/subscriptions/` - Subscription management
 
-### Default Credentials
-Admin:
-- Username: admin
-- Password: admin123
 
 ### Common Issues
 1. Database migration errors:
