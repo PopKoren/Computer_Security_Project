@@ -44,8 +44,16 @@ pip install -r requirements.txt
 
 # Run migrations
 python manage.py migrate
+```
 
-# Start development server
+### Create a superuser (admin):
+```
+python manage.py createsuperuser
+```
+Follow the prompts to set the username, email, and password.
+
+### Start the development server:
+```
 python manage.py runserver
 ```
 
