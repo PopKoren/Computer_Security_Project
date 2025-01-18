@@ -23,6 +23,8 @@ const Navbar = () => {
             onClick={() => navigate(isLoggedIn ? '/menu' : '/')} 
             />
         </div>
+        <h2 class="white-text">This is the safe version of the project.</h2>
+
         <div className="nav-links">
           <button 
             onClick={() => navigate('/about')}
