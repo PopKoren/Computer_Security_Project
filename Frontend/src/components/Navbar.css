@@ -17,7 +17,11 @@
     justify-content: space-between;
     align-items: center;
   }
-  
+
+    .white-text {
+    color: white;
+    margin-left: -120px;
+  }
   .nav-brand {
     display: flex;
     align-items: center;
