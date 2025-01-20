@@ -52,13 +52,15 @@ python manage.py createsuperuser
 Follow the prompts to set the username, email, and password.
 
 
-### Create .env file at the backend folder
-```SECRET_KEY=
+### Create .env file at the backend folder and copy inside
+```
+SECRET_KEY=
 ```
 
 ## Generate a new Django secret key
 Write in the terminal:
-```python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 Copy the output to "SECRET_KEY"
 
