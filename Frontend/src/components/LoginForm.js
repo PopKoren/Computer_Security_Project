@@ -51,7 +51,6 @@ const LoginForm = () => {
   
 
      <div className="login-container">
-        <h1 className="big-header">This is the safe version of the project.</h1>
        <div className="login-card">
          <h2 className="login-title">Login</h2>
          {error && <div className="login-error">{error}</div>}

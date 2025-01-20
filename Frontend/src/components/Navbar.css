@@ -20,8 +20,9 @@
 
     .white-text {
     color: white;
-    margin-left: -120px;
+    margin-left: -150px;
   }
+  
   .nav-brand {
     display: flex;
     align-items: center;

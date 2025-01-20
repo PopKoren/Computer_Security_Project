@@ -147,38 +147,53 @@ def user_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'PUT':
-        subscription = request.data.get('subscription')
-        user.username = request.data.get('username', user.username)
-        user.email = request.data.get('email', user.email)
-        
-        # Update subscription if provided
-        if subscription:
-            # Deactivate current subscription if exists
-            current_sub = Subscription.objects.filter(user=user, is_active=True).first()
-            if current_sub:
-                current_sub.is_active = False
-                current_sub.end_date = timezone.now()
-                current_sub.save()
+        try:
+            subscription = request.data.get('subscription')
+            new_username = request.data.get('username', user.username)
+            new_email = request.data.get('email', user.email)
+            
+            # Check for duplicate email that isn't the current user's email
+            if new_email != user.email and User.objects.filter(email=new_email).exists():
+                return Response({
+                    'error': 'A user with that email already exists'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+            user.username = new_username
+            user.email = new_email
+            
+            # Rest of subscription logic...
+            if subscription:
+                current_sub = Subscription.objects.filter(user=user, is_active=True).first()
+                if current_sub:
+                    current_sub.is_active = False
+                    current_sub.end_date = timezone.now()
+                    current_sub.save()
 
-            # Create new subscription
-            if subscription != "":
-                Subscription.objects.create(
-                    user=user,
-                    plan=subscription.lower(),  # ensure lowercase
-                    is_active=True
-                )
-        
-        user.save()
-        
-        # Get updated subscription for response
-        active_sub = Subscription.objects.filter(user=user, is_active=True).first()
-        return Response({
-            'id': user.pk,
-            'username': user.username,
-            'email': user.email,
-            'subscription': active_sub.plan if active_sub else None,
-            'is_staff': user.is_staff
-        })
+                if subscription != "":
+                    Subscription.objects.create(
+                        user=user,
+                        plan=subscription.lower(),
+                        is_active=True
+                    )
+            
+            user.save()
+            
+            active_sub = Subscription.objects.filter(user=user, is_active=True).first()
+            return Response({
+                'id': user.pk,
+                'username': user.username,
+                'email': user.email,
+                'subscription': active_sub.plan if active_sub else None,
+                'is_staff': user.is_staff
+            })
+        except IntegrityError:
+            return Response({
+                'error': 'A user with that username already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -478,9 +493,8 @@ def client_list(request) -> Response:
         } for client in clients]
         return Response(data)
 
-    # if method is POST
+  
     try:
-        # Escape input before saving to database
         client: Client = Client.objects.create(
             name=escape(request.data.get('name')),
             email=escape(request.data.get('email')),
