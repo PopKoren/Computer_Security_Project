@@ -31,38 +31,44 @@ def login_view(request):
     
     try:
         user = User.objects.get(username=username)
-        
-        # Check for login attempts
+            
+        # Check login attempts for THIS specific user
         recent_attempts = LoginAttempt.objects.filter(
             user=user,
             timestamp__gte=timezone.now() - timedelta(minutes=PASSWORD_CONFIG['LOCKOUT_DURATION']),
             successful=False
-        ).count()
+        )
         
-        if recent_attempts >= PASSWORD_CONFIG['MAX_LOGIN_ATTEMPTS']:
+        print(f"Number of recent failed attempts: {recent_attempts.count()}")
+        print(f"Max allowed attempts: {PASSWORD_CONFIG['MAX_LOGIN_ATTEMPTS']}")
+        
+        if recent_attempts.count() >= PASSWORD_CONFIG['MAX_LOGIN_ATTEMPTS']:
+            print(f"Account locked for user: {username}")
             return Response({
                 'error': f'Account locked. Please try again after {PASSWORD_CONFIG["LOCKOUT_DURATION"]} minutes'
             }, status=400)
         
-        # Attempt authentication
-        user = authenticate(username=username, password=password)
+        # Authenticate user
+        authenticated_user = authenticate(username=username, password=password)
         
         # Record login attempt
-        LoginAttempt.objects.create(
-            user=user if user else User.objects.get(username=username),
-            successful=bool(user),
+        login_attempt = LoginAttempt.objects.create(
+            user=user,
+            successful=bool(authenticated_user),
             ip_address=request.META.get('REMOTE_ADDR', '0.0.0.0')
         )
         
-        if user:
-            refresh = RefreshToken.for_user(user)
+        print(f"Login attempt created: {login_attempt.id}, Successful: {login_attempt.successful}") # type: ignore
+        
+        if authenticated_user:
+            refresh = RefreshToken.for_user(authenticated_user)
             return Response({
-                'access': str(refresh.access_token),  # type: ignore
+                'access': str(refresh.access_token), # type: ignore
                 'refresh': str(refresh)
             })
         
         return Response({'error': 'Invalid credentials'}, status=400)
-        
+    
     except User.DoesNotExist:
         return Response({'error': 'Invalid credentials'}, status=400)
     
@@ -79,7 +85,6 @@ def register_view(request):
             return Response({'error': 'Email already registered'}, status=400)
 
         try:
-            # Validate password - now properly catches and handles validation errors
             validate_password(password)
         except ValueError as e:
             return Response({'error': str(e)}, status=400)
