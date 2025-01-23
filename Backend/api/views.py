@@ -380,7 +380,6 @@ def forgot_password(request):
         return Response({'error': 'Email is required'}, status=400)
     
     try:
-        # Change get() to filter().first() to handle multiple users
         user = User.objects.filter(email=email).first()
         
         if not user:
@@ -398,12 +397,11 @@ def forgot_password(request):
         try:
             send_mail(
                 'Password Reset Code',
-                f'Your password reset code is: {verification_code}. This code will expire in 15 minutes.',
+                f'Hello {user}.\nYour password reset code is: {verification_code}. This code will expire in 15 minutes.',
                 'from@example.com',
                 [email],
                 fail_silently=False,
             )
-            print(f"Development code: {verification_code}")  # For development
             
         except Exception as email_error:
             print(f"Email sending failed: {str(email_error)}")
