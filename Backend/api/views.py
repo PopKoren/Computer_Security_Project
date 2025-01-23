@@ -57,7 +57,7 @@ def login_view(request):
         if user:
             refresh = RefreshToken.for_user(user)
             return Response({
-                'access': str(refresh.access_token), # type: ignore
+                'access': str(refresh.access_token),  # type: ignore
                 'refresh': str(refresh)
             })
         

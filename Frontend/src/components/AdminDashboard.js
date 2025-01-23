@@ -21,7 +21,6 @@ const AdminDashboard = () => {
   }, [error]);
 
  useEffect(() => {
-   // Fetch current user
    const fetchCurrentUser = async () => {
      try {
        const response = await fetch('http://localhost:8000/api/user/', {

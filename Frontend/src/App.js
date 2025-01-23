@@ -8,9 +8,9 @@ import AdminDashboard from './components/AdminDashboard';
 import UserProfile from './components/UserProfile';
 import ForgotPassword from './components/ForgotPassword';
 import AboutPage from './components/AboutPage';
-import ClientsTable from './components/ClientsTable';  // Add this
+import ClientsTable from './components/ClientsTable';  
 
-// Add ProtectedRoute component
+
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('access');
   if (!isAuthenticated) {
