@@ -17,7 +17,6 @@ from django.conf import settings
 import random
 import string
 import hashlib
-from .models import PasswordHistory, LoginAttempt
 from .validators import validate_password
 from datetime import timedelta
 from django.db.models import QuerySet
@@ -104,7 +103,6 @@ def register_view(request):
     except IntegrityError:
         return Response({'error': 'Username already exists'}, status=400)
     except Exception as e:
-        print(f"Registration error: {str(e)}")  # For debugging
         return Response({'error': 'An error occurred during registration'}, status=500)
     
 @api_view(['GET'])
