@@ -56,6 +56,8 @@ Copy the output to "SECRET_KEY"
 
 # Run migrations
 ```
+python manage.py makemigrations api
+python manage.py makemigrations
 python manage.py migrate
 ```
 
