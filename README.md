@@ -42,13 +42,6 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-### Create a superuser (admin):
-```
-python manage.py createsuperuser
-```
-Follow the prompts to set the username, email, and password.
-
-
 ### Create .env file at the backend folder and copy inside
 ```
 SECRET_KEY=
@@ -65,6 +58,13 @@ Copy the output to "SECRET_KEY"
 ```
 python manage.py migrate
 ```
+
+### Create a superuser (admin):
+```
+python manage.py createsuperuser
+```
+Follow the prompts to set the username, email, and password.
+
 
 ### Start the development server:
 ```
