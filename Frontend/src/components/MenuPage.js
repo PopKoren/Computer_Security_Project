@@ -74,7 +74,6 @@ const MenuPage = () => {
         setSuccess('');
       }, 3000);
 
-      // Cleanup function to clear timeout if component unmounts
       return () => clearTimeout(timer);
     }
   }, [success]);
@@ -129,7 +128,7 @@ const MenuPage = () => {
         <h1>Welcome, {user?.username}</h1>
         <div className="header-buttons">
         <button 
-          className="clients-button"  // Add this style to your CSS
+          className="clients-button"  
           onClick={() => navigate('/clients')}
         >
           View Clients
