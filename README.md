@@ -40,9 +40,6 @@ source env/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
-
-# Run migrations
-python manage.py migrate
 ```
 
 ### Create a superuser (admin):
@@ -64,6 +61,10 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 ```
 Copy the output to "SECRET_KEY"
 
+# Run migrations
+```
+python manage.py migrate
+```
 
 ### Start the development server:
 ```
