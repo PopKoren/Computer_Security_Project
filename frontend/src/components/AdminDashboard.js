@@ -151,7 +151,7 @@ const AdminDashboard = () => {
                  >
                    Edit
                  </button>
-                 {currentUser && user.id !== currentUser.id && (
+                 {currentUser && user.username !== currentUser.username && (
                   <button
                     className="delete-btn"
                     onClick={() => handleDelete(user.id)}
