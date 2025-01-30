@@ -31,18 +31,15 @@ def login_view(request):
     try:
         user = User.objects.get(username=username)
             
-        # Check login attempts for THIS specific user
         recent_attempts = LoginAttempt.objects.filter(
             user=user,
             timestamp__gte=timezone.now() - timedelta(minutes=PASSWORD_CONFIG['LOCKOUT_DURATION']),
             successful=False
         )
         
-        print(f"Number of recent failed attempts: {recent_attempts.count()}")
-        print(f"Max allowed attempts: {PASSWORD_CONFIG['MAX_LOGIN_ATTEMPTS']}")
+       
         
         if recent_attempts.count() >= PASSWORD_CONFIG['MAX_LOGIN_ATTEMPTS']:
-            print(f"Account locked for user: {username}")
             return Response({
                 'error': f'Account locked. Please try again after {PASSWORD_CONFIG["LOCKOUT_DURATION"]} minutes'
             }, status=400)
@@ -57,7 +54,6 @@ def login_view(request):
             ip_address=request.META.get('REMOTE_ADDR', '0.0.0.0')
         )
         
-        print(f"Login attempt created: {login_attempt.id}, Successful: {login_attempt.successful}") # type: ignore
         
         if authenticated_user:
             refresh = RefreshToken.for_user(authenticated_user)
@@ -248,7 +244,6 @@ def user_update(request):
 def change_password(request):
     user = request.user
     data = request.data
-    print("Received password change request for user:", user.username)
 
     try:
         current_password = data.get('currentPassword')
@@ -263,11 +258,8 @@ def change_password(request):
             
         # Validate new password
         try:
-            print("Attempting password validation...")
             validate_password(new_password, user)
-            print("Password validation successful")
         except ValueError as e:
-            print("Password validation failed:", str(e))
             return Response({'error': str(e)}, status=400)
 
         # Check if new password is different from current
@@ -302,8 +294,6 @@ def change_password(request):
 
     except Exception as e:
         import traceback
-        print("Password change error:", str(e))
-        print("Full traceback:")
         traceback.print_exc()
         return Response({'error': str(e)}, status=400)
     
@@ -395,7 +385,6 @@ def forgot_password(request):
             )
             
         except Exception as email_error:
-            print(f"Email sending failed: {str(email_error)}")
             # During development, return the code in the error message
             return Response({
                 'error': f'Failed to send email. During development, your code is: {verification_code}'
@@ -404,7 +393,6 @@ def forgot_password(request):
         return Response({'message': 'Verification code sent to your email'})
         
     except Exception as e:
-        print(f"Error in forgot_password: {str(e)}")
         return Response({'error': 'An error occurred'}, status=500)
 
 @api_view(['POST'])

@@ -1,5 +1,5 @@
 from django.urls import include, path
-from api import admin, views   # Change this line
+from api import admin, views  
 from django.contrib import admin
 
 
@@ -12,7 +12,7 @@ urlpatterns = [
     path('user/update/', views.user_update, name='user-update'),
     path('user/change-password/', views.change_password, name='change-password'),
     path('user/subscriptions/', views.user_subscriptions, name='user-subscriptions'),
-    path('purchase-plan/', views.purchase_plan, name='purchase-plan'),  # Make sure this exists
+    path('purchase-plan/', views.purchase_plan, name='purchase-plan'),  
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), 
 ]
