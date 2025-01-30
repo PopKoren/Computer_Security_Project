@@ -260,14 +260,7 @@ def change_password(request):
         # Verify current password
         if not authenticate(username=user.username, password=current_password):
             return Response({'error': 'Current password is incorrect'}, status=400)
-
-        print("Validating new password with requirements:")
-        print(f"- Minimum length: {PASSWORD_CONFIG['MIN_LENGTH']}")
-        print(f"- Require uppercase: {PASSWORD_CONFIG['REQUIRE_UPPERCASE']}")
-        print(f"- Require lowercase: {PASSWORD_CONFIG['REQUIRE_LOWERCASE']}")
-        print(f"- Require numbers: {PASSWORD_CONFIG['REQUIRE_NUMBERS']}")
-        print(f"- Require special chars: {PASSWORD_CONFIG['REQUIRE_SPECIAL_CHARS']}")
-
+            
         # Validate new password
         try:
             print("Attempting password validation...")
